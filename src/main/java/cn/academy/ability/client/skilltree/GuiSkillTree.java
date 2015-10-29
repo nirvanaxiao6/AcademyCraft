@@ -30,6 +30,7 @@ import cn.academy.ability.developer.DeveloperType;
 import cn.academy.ability.developer.LearningHelper;
 import cn.academy.core.client.ACRenderingHelper;
 import cn.academy.core.client.Resources;
+import cn.academy.crafting.ModuleCrafting;
 import cn.annoreg.core.Registrant;
 import cn.annoreg.mc.RegInit;
 import cn.liutils.cgui.gui.LIGui;
@@ -41,6 +42,7 @@ import cn.liutils.cgui.gui.component.DrawTexture;
 import cn.liutils.cgui.gui.component.TextBox;
 import cn.liutils.cgui.gui.component.Tint;
 import cn.liutils.cgui.gui.event.FrameEvent;
+import cn.liutils.cgui.gui.event.GuiEventHandler;
 import cn.liutils.cgui.gui.event.FrameEvent.FrameEventHandler;
 import cn.liutils.cgui.gui.event.MouseDownEvent;
 import cn.liutils.cgui.gui.event.MouseDownEvent.MouseDownHandler;
@@ -132,8 +134,10 @@ public abstract class GuiSkillTree extends LIGuiScreen {
 			Widget ball = treeArea.getWidget("ball" + i);
 			ball.addComponent(new LevelHandler(i));
 		}
-		
-		if(aData.isLearned()) {
+		//unfinished;
+		if(this.player.inventory.getCurrentItem().equals(ModuleCrafting.brainComp)){
+			initResetPage();
+		}else if(aData.isLearned()) {
 			initSkillTree();
 		} else {
 			window.addWidget(loaded.getWidget("widgets/not_acquired").copy());
@@ -144,6 +148,13 @@ public abstract class GuiSkillTree extends LIGuiScreen {
 		
 		gui.addWidget("window", window);
 		EventLoader.load(gui, this);
+	}
+	
+	private void initResetPage(){
+		//unfinished;
+		Widget resetButton = null;
+		DrawTexture.get(resetButton).color=CRL_WARNING;
+		resetButton.addComponent(new AbilityResetHandler());
 	}
 	
 	private void initSkillTree() {
@@ -495,6 +506,23 @@ public abstract class GuiSkillTree extends LIGuiScreen {
 	 	
 	 }
 
+	public class AbilityResetHandler extends Component{
+
+		public AbilityResetHandler() {
+			super("abilityReset");
+			addEventHandler(new FrameEventHandler() {
+
+				@Override
+				public void handleEvent(Widget w, FrameEvent event) {
+					// TODO Auto-generated method stub
+					//unfinished
+				}
+				
+			});
+		}
+		
+	}
+	
 	public class SkillLevelDesc extends Widget {
 		
 		final Skill skill;
