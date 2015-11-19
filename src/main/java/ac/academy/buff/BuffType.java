@@ -11,11 +11,13 @@ import net.minecraft.util.StringUtils;
 
 public abstract class BuffType {
     public final boolean isBadEffect;
+    public final int intervalTick;
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
     
-    public BuffType(String id,boolean isBadEffect){
+    public BuffType(String id,int intervalTick,boolean isBadEffect){
     	this.id = id;
+    	this.intervalTick=intervalTick;
     	this.isBadEffect = isBadEffect;
     }
     
@@ -28,10 +30,10 @@ public abstract class BuffType {
     }
     
     public String getName(){
-    	return StatCollector.translateToLocal(key(id));
+    	return StatCollector.translateToLocal(getKey(id));
     }
     
-    private String key(String id) {
+    public String getKey(String id) {
 		return "ac.buff."+id;
 	}
     
@@ -54,9 +56,15 @@ public abstract class BuffType {
 	/**
 	 * Check every tick.
 	 * Invoke {@link BuffType#performEffect(EntityLivingBase, int)} method when is true.
+	 * Default: Invoke {@link BuffType#performEffect(EntityLivingBase, int)} method every {@link BuffType#intervalTick} ticks.
 	 * @param durationTick The rest time of the buff
 	 * @param level 
 	 * @return The buff should perform the effect at this tick or not.
 	 */
-	public abstract boolean isThisTickReady(int durationTick, int level);
+	public boolean isThisTickReady(int durationTick, int level) {
+		if(durationTick%this.intervalTick==0){
+			return true;
+		}
+		return false;
+	}
 }
