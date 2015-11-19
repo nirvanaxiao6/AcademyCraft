@@ -66,9 +66,7 @@ public class Buff {
 		return nbt;
 	}
 	
-	public void fromNBTTag(NBTTagCompound nbt){
-		this.isDurationForever=nbt.getBoolean("isForever");
-		this.level = nbt.getByte("level");
-		this.duration = nbt.getInteger("duration");
+	public static Buff fromNBTTag(String tagName,NBTTagCompound nbt){
+		return new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
 	}
 }
