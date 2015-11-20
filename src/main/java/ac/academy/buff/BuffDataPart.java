@@ -33,7 +33,23 @@ public class BuffDataPart extends DataPart {
 	@Override
 	public void tick() {
 		for(Buff buff:activedBuff.values()){
-			//buff.onUpdate(getEntityLiving());
+			/*
+			if(!buff.onUpdate(getPlayer())){
+				remove(buff);
+			}
+			*/
 		}
+	}
+	public void add(Buff buff){
+		if(this.activedBuff.containsKey(buff.getType().id)){
+			this.activedBuff.get(buff.getType().id).combine(buff);
+		}else{
+			this.activedBuff.put(buff.getType().id, buff);
+		}
+	}
+
+	private void remove(Buff buff) {
+		activedBuff.remove(buff.getType().id);
+		buff.removeFromEntity();
 	}
 }

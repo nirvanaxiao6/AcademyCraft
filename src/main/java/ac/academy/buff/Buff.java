@@ -2,6 +2,7 @@ package ac.academy.buff;
 
 import cn.lambdalib.util.datapart.PlayerData;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -9,6 +10,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class Buff {
 	private final BuffType type;
 	private EntityLivingBase entity;
+	private EntityPlayer origin;
 	
 	private int duration;
 	private int level;
@@ -54,13 +56,13 @@ public class Buff {
 	
 	public boolean onUpdate() {
         if (this.duration>0) {
-            this.type.performEffectOnTick(entity, duration, level);
+            this.type.performEffectOnTick(this, entity, duration, level);
             this.duration--;
         }
         return this.duration>0;
     }
 	
-	private void combine(Buff buff){
+	public void combine(Buff buff){
 		switch(this.type.getDrationCombineType()){
 		case Max:
 			if(this.isDurationForever||buff.isDurationForever){
@@ -95,20 +97,25 @@ public class Buff {
 			break;
 		}
 		
-		this.type.performEffectOnCombine(entity, duration, level);
+		this.type.performEffectOnCombine(this, entity, level);
+	}
+	
+	public EntityPlayer getOrigin(){
+		return this.origin;
 	}
 	/**
 	 * unfinished
 	 * @param entity
 	 */
-	public void addToEntity(EntityLivingBase entity){
+	public void addToEntity(EntityPlayer origin, EntityLivingBase entity){
 		this.entity=entity;
 		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
-		if(data.activedBuff.containsKey(this.type.id)){
-			data.activedBuff.get(type.id).combine(this);
-		}else{
-			data.activedBuff.put(type.id, this);
-		}
+		data.add(this);
+		this.type.performEffectOnAdded(this, entity, level);
+	}
+	
+	public void removeFromEntity(){
+		this.type.performEffectOnRemove(this, entity, level);
 	}
 	
 	public NBTTagCompound toNBTTag(){

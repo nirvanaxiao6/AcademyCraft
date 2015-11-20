@@ -10,7 +10,6 @@ import net.minecraft.util.StringUtils;
 
 public abstract class BuffType {
     public final boolean isBadEffect;
-    public final int intervalTick;
 
 	private CombineType durationCombineType = CombineType.Max;
 	private CombineType levelCombineType = CombineType.Max;
@@ -18,9 +17,8 @@ public abstract class BuffType {
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
     
-    public BuffType(String id,int intervalTick,boolean isBadEffect){
+    public BuffType(String id, boolean isBadEffect){
     	this.id = id;
-    	this.intervalTick=intervalTick;
     	this.isBadEffect = isBadEffect;
     }
     
@@ -50,8 +48,12 @@ public abstract class BuffType {
 		return this.durationCombineType;
 	}
     
+	public void registBuffType(){
+    	allBuffMap.put(this.id, this);
+    }
+	
     public static void registBuffType(BuffType type){
-    	allBuffMap.put(type.id, type);
+    	type.registBuffType();
     }
     
     
@@ -81,7 +83,11 @@ public abstract class BuffType {
         }
     }
     
-	public void performEffectOnTick(EntityLivingBase entity,int duration, int level){}
+	public void performEffectOnTick(Buff buff, EntityLivingBase entity,int duration, int level){}
 	
-	public void performEffectOnCombine(EntityLivingBase entity,int duration, int level){}
+	public void performEffectOnCombine(Buff buff, EntityLivingBase entity, int level){}
+	
+	public void performEffectOnAdded(Buff buff, EntityLivingBase entity, int level){}
+	
+	public void performEffectOnRemove(Buff buff, EntityLivingBase entity, int level){}
 }
