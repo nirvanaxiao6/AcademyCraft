@@ -4,13 +4,19 @@ import java.util.HashMap;
 
 import cn.lambdalib.annoreg.core.Registrant;
 import cn.lambdalib.util.datapart.DataPart;
+import cn.lambdalib.util.datapart.PlayerData;
 import cn.lambdalib.util.datapart.RegDataPart;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 @Registrant
 @RegDataPart("AC_Buff")
 public class BuffDataPart extends DataPart {
 	HashMap<String, Buff> activedBuff = new HashMap<String, Buff>();
+	
+	public static BuffDataPart get(EntityPlayer player){
+		return PlayerData.get(player).getPart(BuffDataPart.class);
+	}
 	
 	@Override
 	public void fromNBT(NBTTagCompound tag) {
@@ -40,6 +46,7 @@ public class BuffDataPart extends DataPart {
 			*/
 		}
 	}
+	
 	public void add(Buff buff){
 		if(this.activedBuff.containsKey(buff.getType().id)){
 			this.activedBuff.get(buff.getType().id).combine(buff);
