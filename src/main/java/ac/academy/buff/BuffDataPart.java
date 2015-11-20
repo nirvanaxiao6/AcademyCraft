@@ -1,6 +1,6 @@
 package ac.academy.buff;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.lambdalib.annoreg.core.Registrant;
 import cn.lambdalib.util.datapart.DataPart;
@@ -10,21 +10,21 @@ import net.minecraft.nbt.NBTTagCompound;
 @Registrant
 @RegDataPart("AC_Buff")
 public class BuffDataPart extends DataPart {
-	ArrayList<Buff> activedBuff = new ArrayList<Buff>();
+	HashMap<String, Buff> activedBuff = new HashMap<String, Buff>();
 	
 	@Override
 	public void fromNBT(NBTTagCompound tag) {
 		activedBuff.clear();
 		for(Object s:tag.func_150296_c()){
 			String key = (String)s;
-			activedBuff.add(Buff.fromNBTTag(key, tag.getCompoundTag(key)));
+			activedBuff.put(key, Buff.fromNBTTag(key, tag.getCompoundTag(key)));
 		}
 	}
 
 	@Override
 	public NBTTagCompound toNBT() {
 		NBTTagCompound nbt = new NBTTagCompound();
-		for(Buff buff:activedBuff){
+		for(Buff buff:activedBuff.values()){
 			nbt.setTag(buff.getType().id, buff.toNBTTag());
 		}
 		return nbt;
@@ -32,7 +32,7 @@ public class BuffDataPart extends DataPart {
 	
 	@Override
 	public void tick() {
-		for(Buff buff:activedBuff){
+		for(Buff buff:activedBuff.values()){
 			//buff.onUpdate(getEntityLiving());
 		}
 	}

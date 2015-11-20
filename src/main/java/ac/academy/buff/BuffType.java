@@ -5,13 +5,16 @@ import com.google.common.collect.HashBiMap;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 
 public abstract class BuffType {
     public final boolean isBadEffect;
     public final int intervalTick;
+
+	private CombineType durationCombineType = CombineType.Max;
+	private CombineType levelCombineType = CombineType.Max;
+	
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
     
@@ -21,9 +24,36 @@ public abstract class BuffType {
     	this.isBadEffect = isBadEffect;
     }
     
+
+	public static enum CombineType{
+		Max,Sum,PlusOne,NoChange;
+	}
+	
+	public void setCombineType(CombineType durationCombineType, CombineType levelCombineType) {
+		this.durationCombineType = durationCombineType;
+		this.levelCombineType = levelCombineType;
+	}
+	
+	public void setDrationCombineType(CombineType durationCombineType) {
+		this.durationCombineType = durationCombineType;
+	}
+	
+	public void setLevelCombineType(CombineType levelCombineType) {
+		this.levelCombineType = levelCombineType;
+	}
+	
+	public CombineType getDrationCombineType(){
+		return this.durationCombineType;
+	}
+	
+	public CombineType getLevelCombineType(){
+		return this.durationCombineType;
+	}
+    
     public static void registBuffType(BuffType type){
     	allBuffMap.put(type.id, type);
     }
+    
     
     public static BuffType get(String id) {
 		return allBuffMap.get(id);
@@ -51,20 +81,7 @@ public abstract class BuffType {
         }
     }
     
-	public abstract void performEffect(EntityLivingBase entity,int level);
+	public void performEffectOnTick(EntityLivingBase entity,int duration, int level){}
 	
-	/**
-	 * Check every tick.
-	 * Invoke {@link BuffType#performEffect(EntityLivingBase, int)} method when is true.
-	 * Default: Invoke {@link BuffType#performEffect(EntityLivingBase, int)} method every {@link BuffType#intervalTick} ticks.
-	 * @param durationTick The rest time of the buff
-	 * @param level 
-	 * @return The buff should perform the effect at this tick or not.
-	 */
-	public boolean isThisTickReady(int durationTick, int level) {
-		if(durationTick%this.intervalTick==0){
-			return true;
-		}
-		return false;
-	}
+	public void performEffectOnCombine(EntityLivingBase entity,int duration, int level){}
 }
