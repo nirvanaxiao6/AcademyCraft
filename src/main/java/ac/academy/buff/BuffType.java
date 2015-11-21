@@ -10,20 +10,27 @@ import net.minecraft.util.StringUtils;
 
 public abstract class BuffType {
     public final boolean isBadEffect;
+    public final int defaultDuration;
 
 	private CombineType durationCombineType = CombineType.Max;
 	private CombineType levelCombineType = CombineType.Max;
 	
+	private RemoveType levelRemoveType = RemoveType.RemoveAll;
+	
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
     
-    public BuffType(String id, boolean isBadEffect){
+    public BuffType(String id, int defaultDuration, boolean isBadEffect) {
     	this.id = id;
+    	this.defaultDuration = defaultDuration;
     	this.isBadEffect = isBadEffect;
     }
     
+    public BuffType(String id, boolean isBadEffect) {
+    	this(id,0,isBadEffect);
+    }
 
-	public static enum CombineType{
+    public static enum CombineType{
 		Max,Sum,PlusOne,NoChange;
 	}
 	
@@ -47,7 +54,21 @@ public abstract class BuffType {
 	public CombineType getLevelCombineType(){
 		return this.durationCombineType;
 	}
+	
+	
+	public static enum RemoveType{
+		RemoveOne, RemoveAll;
+	}
     
+	public void setLevelRemoveType(RemoveType levelRemoveType){
+		this.levelRemoveType = levelRemoveType;
+	}
+	
+	public RemoveType getLevelRemoveType(){
+		return this.levelRemoveType;
+	}
+	
+	
 	public void registBuffType(){
     	allBuffMap.put(this.id, this);
     }

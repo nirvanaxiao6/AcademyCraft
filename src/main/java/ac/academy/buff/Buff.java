@@ -16,21 +16,47 @@ public class Buff {
 	private int level;
 	private boolean isDurationForever;
 	
-	private Buff(BuffType type,int level,int durationTick,boolean isForever){
+	private Buff(BuffType type, int level, int durationTick, boolean useDefaultDuration, boolean isForever) {
 		this.type = type;
 		this.level = level;
-		this.duration = durationTick;
+		
+		if(useDefaultDuration)
+			this.duration = this.type.defaultDuration;
+		else
+			this.duration = durationTick;
+		
 		this.isDurationForever = isForever;
 	}
 	
+	private Buff(BuffType type, int level, int durationTick, boolean isForever) {
+		this(type,level,durationTick,false,isForever);
+	}
+	
 	public Buff(BuffType type,int level,int durationTick) {
-		this(type,level,durationTick,false);
+		this(type,level,durationTick,false,false);
 	}
 	
-	public Buff(BuffType type,int level) {
-		this(type,level,0,true);
+	public Buff(BuffType type,int durationTick) {
+		this(type,1,durationTick,false,false);
 	}
-	
+	/**
+	 * 
+	 * @param type
+	 * @param level
+	 * @param isForeverOrDefault True if the buff will last forever;
+	 * False if the buff use the default duration defined in {@link BuffType#defaultDuration}
+	 */
+	public Buff(BuffType type, int level, boolean isForeverOrDefault){
+		this.type = type;
+		this.level = level;
+		if(isForeverOrDefault){
+			this.duration = 0;
+			this.isDurationForever = true;
+		}else{
+			this.duration = this.type.defaultDuration;
+			this.isDurationForever = false;
+		}
+	}
 	
 	public BuffType getType(){
 		return this.type;
@@ -114,8 +140,18 @@ public class Buff {
 		this.type.performEffectOnAdded(this, entity, level);
 	}
 	
-	public void removeFromEntity(){
+	public boolean removeFromEntity(){
+		switch(type.getLevelRemoveType()){
+		case RemoveAll:
+			this.level=0;
+			break;
+		case RemoveOne:
+			this.level--;
+			this.duration=this.type.defaultDuration;
+			break;
+		}
 		this.type.performEffectOnRemove(this, entity, level);
+		return this.level<=0;
 	}
 	
 	public NBTTagCompound toNBTTag(){

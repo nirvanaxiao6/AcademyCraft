@@ -56,7 +56,8 @@ public class BuffDataPart extends DataPart {
 	}
 
 	private void remove(Buff buff) {
-		activedBuff.remove(buff.getType().id);
-		buff.removeFromEntity();
+		if(buff.removeFromEntity()){
+			activedBuff.remove(buff.getType().id);
+		}
 	}
 }
