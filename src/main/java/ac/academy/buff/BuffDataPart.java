@@ -47,7 +47,7 @@ public class BuffDataPart extends DataPart {
 		}
 	}
 	
-	public void add(Buff buff){
+	void add(Buff buff) {
 		if(this.activedBuff.containsKey(buff.getType().id)){
 			this.activedBuff.get(buff.getType().id).combine(buff);
 		}else{
@@ -55,9 +55,7 @@ public class BuffDataPart extends DataPart {
 		}
 	}
 
-	private void remove(Buff buff) {
-		if(buff.removeFromEntity()){
-			activedBuff.remove(buff.getType().id);
-		}
+	void remove(Buff buff) {
+		this.activedBuff.remove(buff.getType().id);
 	}
 }

@@ -109,6 +109,20 @@ public abstract class BuffType {
 	public void performEffectOnCombine(Buff buff, EntityLivingBase entity, int level){}
 	
 	public void performEffectOnAdded(Buff buff, EntityLivingBase entity, int level){}
-	
+	/**
+	 * Calls on the buff removed when its duration is 0.
+	 * Mostly the buff remove 1 level and invoke this method.
+	 * @param buff
+	 * @param entity
+	 * @param level
+	 */
 	public void performEffectOnRemove(Buff buff, EntityLivingBase entity, int level){}
+	/**
+	 * Only calls when the buff cleared by other things.
+	 * After the clear the buff's level turns to 0.
+	 * @param buff
+	 * @param entity
+	 * @param level
+	 */
+	public void performEffectOnClear(Buff buff, EntityLivingBase entity, int level){}
 }

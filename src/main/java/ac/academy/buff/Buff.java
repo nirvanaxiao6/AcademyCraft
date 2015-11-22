@@ -133,25 +133,45 @@ public class Buff {
 	 * unfinished
 	 * @param entity
 	 */
-	public void addToEntity(EntityPlayer origin, EntityLivingBase entity){
+	public void addToEntity(EntityPlayer origin, EntityLivingBase entity) {
 		this.entity=entity;
 		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
 		data.add(this);
 		this.type.performEffectOnAdded(this, entity, level);
 	}
 	
-	public boolean removeFromEntity(){
+	public static void removeFromEntity(EntityLivingBase entity, BuffType type) {
+		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
+		Buff buff = data.activedBuff.get(type.id);
+		if(buff==null)
+			return;
+		
+		type.performEffectOnRemove(buff, entity, buff.level);
+		
 		switch(type.getLevelRemoveType()){
 		case RemoveAll:
-			this.level=0;
+			buff.level=0;
 			break;
 		case RemoveOne:
-			this.level--;
-			this.duration=this.type.defaultDuration;
+			buff.level--;
+			buff.duration=buff.type.defaultDuration;
 			break;
 		}
-		this.type.performEffectOnRemove(this, entity, level);
-		return this.level<=0;
+		if(buff.level<=0){
+			data.remove(buff);
+		}
+	}
+
+	public static void clearFromEntity(EntityLivingBase entity, BuffType type) {
+		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
+		Buff buff = data.activedBuff.get(type.id);
+		if(buff==null)
+			return;
+		
+		type.performEffectOnClear(buff, entity, buff.level);
+		buff.level = 0;
+		
+		data.remove(buff);
 	}
 	
 	public NBTTagCompound toNBTTag(){
