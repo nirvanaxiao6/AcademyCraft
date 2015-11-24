@@ -1,4 +1,4 @@
-package ac.academy.buff;
+package cn.academy.buff;
 
 import com.google.common.collect.HashBiMap;
 
@@ -104,6 +104,8 @@ public abstract class BuffType {
         }
     }
     
+    public void debug(Buff buff){}
+    
 	public void performEffectOnTick(Buff buff, EntityLivingBase entity,int duration, int level){}
 	
 	public void performEffectOnCombine(Buff buff, EntityLivingBase entity, int level){}
@@ -111,7 +113,7 @@ public abstract class BuffType {
 	public void performEffectOnAdded(Buff buff, EntityLivingBase entity, int level){}
 	/**
 	 * Calls on the buff removed when its duration is 0.
-	 * Mostly the buff remove 1 level and invoke this method.
+	 * Mostly the buff remove 1 level and invoke this method each time on remove.
 	 * @param buff
 	 * @param entity
 	 * @param level
@@ -119,7 +121,6 @@ public abstract class BuffType {
 	public void performEffectOnRemove(Buff buff, EntityLivingBase entity, int level){}
 	/**
 	 * Only calls when the buff cleared by other things.
-	 * After the clear the buff's level turns to 0.
 	 * @param buff
 	 * @param entity
 	 * @param level

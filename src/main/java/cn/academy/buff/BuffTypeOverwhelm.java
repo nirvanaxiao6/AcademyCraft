@@ -1,4 +1,4 @@
-package ac.academy.buff;
+package cn.academy.buff;
 
 import cn.academy.ability.api.data.CPData;
 import net.minecraft.entity.EntityLivingBase;

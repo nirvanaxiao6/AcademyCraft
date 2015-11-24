@@ -1,5 +1,6 @@
-package ac.academy.buff;
+package cn.academy.buff;
 
+import cn.academy.core.AcademyCraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -32,5 +33,15 @@ public class BuffTypeAllergic extends BuffType {
 			entity.setDead();
 			break;
 		}
+	}
+	
+	@Override
+	public void debug(Buff buff) {
+		String funcName = Thread.currentThread().getStackTrace()[2].getMethodName();
+		AcademyCraft.log.debug(funcName + " : " +
+				"\n	level : " + buff.getLevel() +
+				"\n	entity : " + buff.getEntity() +
+				"\n	origin : " + buff.getOrigin()
+				);
 	}
 }

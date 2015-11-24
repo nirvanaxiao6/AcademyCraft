@@ -1,6 +1,7 @@
-package ac.academy.buff;
+package cn.academy.buff;
 
-import cn.lambdalib.util.datapart.PlayerData;
+import cn.lambdalib.util.datapart.EntityData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -62,6 +63,10 @@ public class Buff {
 		return this.type;
 	}
 	
+	public int getLevel(){
+		return this.level;
+	}
+	
 	public boolean isForever() {
 		return this.isDurationForever;
 	}
@@ -80,7 +85,7 @@ public class Buff {
 		this.duration=0;
 	}
 	
-	public boolean onUpdate() {
+	public boolean onUpdate(EntityLivingBase entity) {
         if (this.duration>0) {
             this.type.performEffectOnTick(this, entity, duration, level);
             this.duration--;
@@ -126,22 +131,27 @@ public class Buff {
 		this.type.performEffectOnCombine(this, entity, level);
 	}
 	
+	public Entity getEntity(){
+		return this.entity;
+	}
+	
 	public EntityPlayer getOrigin(){
 		return this.origin;
 	}
 	/**
-	 * unfinished
+	 * Add this buff to a Entity.
+	 * @param origin
 	 * @param entity
 	 */
-	public void addToEntity(EntityPlayer origin, EntityLivingBase entity) {
+	public void addToEntity(EntityLivingBase origin, EntityLivingBase entity) {
 		this.entity=entity;
-		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
+		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		data.add(this);
 		this.type.performEffectOnAdded(this, entity, level);
 	}
 	
-	public static void removeFromEntity(EntityLivingBase entity, BuffType type) {
-		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
+	void removeFromEntity(BuffType type) {
+		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		Buff buff = data.activedBuff.get(type.id);
 		if(buff==null)
 			return;
@@ -161,17 +171,18 @@ public class Buff {
 			data.remove(buff);
 		}
 	}
-
-	public static void clearFromEntity(EntityLivingBase entity, BuffType type) {
-		BuffDataPart data = null;//= PlayerData.get(null).getPart(BuffDataPart.class);
+	
+	public static void clearFromEntity(EntityLivingBase entity, BuffType type,int level) {
+		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		Buff buff = data.activedBuff.get(type.id);
 		if(buff==null)
 			return;
 		
 		type.performEffectOnClear(buff, entity, buff.level);
-		buff.level = 0;
-		
-		data.remove(buff);
+		buff.level -= level;
+		if(buff.level<=0){
+			data.remove(buff);
+		}
 	}
 	
 	public NBTTagCompound toNBTTag(){

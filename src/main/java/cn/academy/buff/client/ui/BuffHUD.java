@@ -1,6 +1,6 @@
-package ac.academy.buff.client.ui;
+package cn.academy.buff.client.ui;
 
-import ac.academy.buff.BuffDataPart;
+import cn.academy.buff.BuffDataPart;
 import cn.lambdalib.util.client.auxgui.AuxGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;

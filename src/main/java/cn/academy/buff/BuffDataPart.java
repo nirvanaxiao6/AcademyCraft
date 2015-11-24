@@ -1,21 +1,23 @@
-package ac.academy.buff;
+package cn.academy.buff;
 
 import java.util.HashMap;
 
+import cn.academy.core.AcademyCraft;
 import cn.lambdalib.annoreg.core.Registrant;
 import cn.lambdalib.util.datapart.DataPart;
-import cn.lambdalib.util.datapart.PlayerData;
+import cn.lambdalib.util.datapart.EntityData;
 import cn.lambdalib.util.datapart.RegDataPart;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 @Registrant
 @RegDataPart("AC_Buff")
-public class BuffDataPart extends DataPart {
+public class BuffDataPart extends DataPart<EntityLivingBase> {
 	HashMap<String, Buff> activedBuff = new HashMap<String, Buff>();
 	
-	public static BuffDataPart get(EntityPlayer player){
-		return PlayerData.get(player).getPart(BuffDataPart.class);
+	public static BuffDataPart get(EntityLivingBase entity){
+		return EntityData.get(entity).getPart(BuffDataPart.class);
 	}
 	
 	@Override
@@ -39,15 +41,23 @@ public class BuffDataPart extends DataPart {
 	@Override
 	public void tick() {
 		for(Buff buff:activedBuff.values()){
-			/*
-			if(!buff.onUpdate(getPlayer())){
+			
+			if(AcademyCraft.DEBUG_MODE){
+				buff.getType().debug(buff);
+			}
+			
+			if(!buff.onUpdate(getEntity())){
 				remove(buff);
 			}
-			*/
 		}
 	}
 	
 	void add(Buff buff) {
+		
+		if(AcademyCraft.DEBUG_MODE){
+			buff.getType().debug(buff);
+		}
+		
 		if(this.activedBuff.containsKey(buff.getType().id)){
 			this.activedBuff.get(buff.getType().id).combine(buff);
 		}else{
@@ -56,6 +66,11 @@ public class BuffDataPart extends DataPart {
 	}
 
 	void remove(Buff buff) {
+		
+		if(AcademyCraft.DEBUG_MODE){
+			buff.getType().debug(buff);
+		}
+		
 		this.activedBuff.remove(buff.getType().id);
 	}
 }
