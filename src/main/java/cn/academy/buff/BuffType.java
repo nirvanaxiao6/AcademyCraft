@@ -1,13 +1,22 @@
 package cn.academy.buff;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import com.google.common.collect.HashBiMap;
 
+import cn.lambdalib.annoreg.base.RegistrationClassSimple;
+import cn.lambdalib.annoreg.core.Registrant;
+import cn.lambdalib.annoreg.core.RegistryTypeDecl;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 
+@Registrant
 public abstract class BuffType {
     public final boolean isBadEffect;
     public final int defaultDuration;
@@ -52,7 +61,7 @@ public abstract class BuffType {
 	}
 	
 	public CombineType getLevelCombineType(){
-		return this.durationCombineType;
+		return this.levelCombineType;
 	}
 	
 	

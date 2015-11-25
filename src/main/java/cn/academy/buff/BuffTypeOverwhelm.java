@@ -1,13 +1,16 @@
 package cn.academy.buff;
 
 import cn.academy.ability.api.data.CPData;
+import cn.lambdalib.annoreg.core.Registrant;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
+@Registrant
+@RegBuffType
 public class BuffTypeOverwhelm extends BuffType {
 
 	public BuffTypeOverwhelm() {
-		super("Overwhelm",true);
+		super("overwhelm",true);
 		this.registBuffType();
 	}
 	

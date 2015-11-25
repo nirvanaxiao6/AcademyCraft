@@ -48,8 +48,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class Flashing extends SpecialSkill {
 
-	public static final Flashing instance = new Flashing();
 	static List<Movement> movements = new ArrayList();
+	public static final Flashing instance = new Flashing();
 
 	private Flashing() {
 		super("flashing", 5);

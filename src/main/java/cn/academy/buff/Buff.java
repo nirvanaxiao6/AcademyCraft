@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class Buff {
 	private final BuffType type;
 	private EntityLivingBase entity;
-	private EntityPlayer origin;
+	private EntityLivingBase origin;
 	
 	private int duration;
 	private int level;
@@ -93,7 +93,8 @@ public class Buff {
         return this.duration>0;
     }
 	
-	public void combine(Buff buff){
+	public Buff combine(Buff buff){
+		this.origin = buff.origin;
 		switch(this.type.getDrationCombineType()){
 		case Max:
 			if(this.isDurationForever||buff.isDurationForever){
@@ -102,14 +103,13 @@ public class Buff {
 			}
 			this.duration = Math.max(this.duration, buff.duration);
 			break;
-		case Sum:{
+		case Sum:
 			if(this.isDurationForever||buff.isDurationForever){
 				this.isDurationForever = true;
 				break;
 			}
 			this.duration+=buff.duration;
 			break;
-		}
 		case PlusOne:case NoChange:
 			break;
 		}
@@ -129,13 +129,14 @@ public class Buff {
 		}
 		
 		this.type.performEffectOnCombine(this, entity, level);
+		return this;
 	}
 	
 	public Entity getEntity(){
 		return this.entity;
 	}
 	
-	public EntityPlayer getOrigin(){
+	public EntityLivingBase getOrigin(){
 		return this.origin;
 	}
 	/**
@@ -144,13 +145,14 @@ public class Buff {
 	 * @param entity
 	 */
 	public void addToEntity(EntityLivingBase origin, EntityLivingBase entity) {
-		this.entity=entity;
+		this.entity = entity;
+		this.origin = origin;
 		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		data.add(this);
 		this.type.performEffectOnAdded(this, entity, level);
 	}
 	
-	void removeFromEntity(BuffType type) {
+	void removeFromEntity(EntityLivingBase entity, BuffType type) {
 		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		Buff buff = data.activedBuff.get(type.id);
 		if(buff==null)
@@ -190,10 +192,15 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
+		nbt.setInteger("originID", Integer.valueOf(origin.getEntityId()));
 		return nbt;
 	}
 	
-	public static Buff fromNBTTag(String tagName,NBTTagCompound nbt){
-		return new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
+	public static Buff fromNBTTag(EntityLivingBase entity, String tagName,NBTTagCompound nbt){
+		EntityLivingBase origin = (EntityLivingBase) entity.worldObj.getEntityByID(nbt.getInteger("originID"));
+		Buff buff = new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
+		buff.entity = entity;
+		buff.origin = origin;
+		return buff;
 	}
 }

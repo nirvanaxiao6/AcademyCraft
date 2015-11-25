@@ -16,6 +16,12 @@ import net.minecraft.nbt.NBTTagCompound;
 public class BuffDataPart extends DataPart<EntityLivingBase> {
 	HashMap<String, Buff> activedBuff = new HashMap<String, Buff>();
 	
+	public BuffDataPart(){
+		super();
+		this.setTick();
+		this.clearOnDeath();
+	}
+	
 	public static BuffDataPart get(EntityLivingBase entity){
 		return EntityData.get(entity).getPart(BuffDataPart.class);
 	}
@@ -25,7 +31,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		activedBuff.clear();
 		for(Object s:tag.func_150296_c()){
 			String key = (String)s;
-			activedBuff.put(key, Buff.fromNBTTag(key, tag.getCompoundTag(key)));
+			activedBuff.put(key, Buff.fromNBTTag(getEntity(), key, tag.getCompoundTag(key)));
 		}
 	}
 
@@ -41,27 +47,25 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	@Override
 	public void tick() {
 		for(Buff buff:activedBuff.values()){
-			
+			if(!buff.onUpdate(getEntity())){
+				buff.removeFromEntity(getEntity(), buff.getType());
+			}
+
 			if(AcademyCraft.DEBUG_MODE){
 				buff.getType().debug(buff);
-			}
-			
-			if(!buff.onUpdate(getEntity())){
-				remove(buff);
 			}
 		}
 	}
 	
 	void add(Buff buff) {
-		
-		if(AcademyCraft.DEBUG_MODE){
-			buff.getType().debug(buff);
-		}
-		
 		if(this.activedBuff.containsKey(buff.getType().id)){
-			this.activedBuff.get(buff.getType().id).combine(buff);
+			buff = this.activedBuff.get(buff.getType().id).combine(buff);
 		}else{
 			this.activedBuff.put(buff.getType().id, buff);
+		}
+
+		if(AcademyCraft.DEBUG_MODE){
+			buff.getType().debug(buff);
 		}
 	}
 
