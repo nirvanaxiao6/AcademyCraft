@@ -43,10 +43,10 @@ public class BuffTypeMedicineAllergic extends BuffType {
 	@Override
 	public void debug(Buff buff) {
 		String funcName = Thread.currentThread().getStackTrace()[2].getMethodName();
-		if(!funcName.equals("tick"))
-			AcademyCraft.log.info(funcName + " : " +
+		if(!funcName.equals("tick")||buff.getDuration()%10==0)
+			AcademyCraft.log.info("\n" + funcName + " : " +
 				"\n	level : " + buff.getLevel() +
-				"\n	entity : " + buff.getEntity() +
+				"\n	duration : " + buff.getDuration() +
 				"\n	origin : " + buff.getOrigin()
 				);
 	}

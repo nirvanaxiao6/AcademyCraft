@@ -19,7 +19,6 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	public BuffDataPart(){
 		super();
 		this.setTick();
-		this.clearOnDeath();
 	}
 	
 	public static BuffDataPart get(EntityLivingBase entity){
@@ -59,7 +58,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	
 	void add(Buff buff) {
 		if(this.activedBuff.containsKey(buff.getType().id)){
-			buff = this.activedBuff.get(buff.getType().id).combine(buff);
+			buff = this.activedBuff.get(buff.getType().id).combine(getEntity(), buff);
 		}else{
 			this.activedBuff.put(buff.getType().id, buff);
 		}
