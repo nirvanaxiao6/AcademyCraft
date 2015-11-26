@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class Buff {
 	private final BuffType type;
-	private EntityLivingBase origin;
+	private int originID;
 	
 	private int duration;
 	private int level;
@@ -93,7 +93,7 @@ public class Buff {
     }
 	
 	public Buff combine(EntityLivingBase entity, Buff buff){
-		this.origin = buff.origin;
+		this.originID = buff.originID;
 		switch(this.type.getDrationCombineType()){
 		case Max:
 			if(this.isDurationForever||buff.isDurationForever){
@@ -131,8 +131,8 @@ public class Buff {
 		return this;
 	}
 	
-	public EntityLivingBase getOrigin(){
-		return this.origin;
+	public int getOrigin(){
+		return this.originID;
 	}
 	/**
 	 * Add this buff to a Entity.
@@ -140,7 +140,7 @@ public class Buff {
 	 * @param entity
 	 */
 	public void addToEntity(EntityLivingBase origin, EntityLivingBase entity) {
-		this.origin = origin;
+		this.originID = origin.getEntityId();
 		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		data.add(this);
 		this.type.performEffectOnAdded(this, entity, level);
@@ -186,14 +186,13 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
-		nbt.setInteger("originID", Integer.valueOf(origin.getEntityId()));
+		nbt.setInteger("originID", Integer.valueOf(originID));
 		return nbt;
 	}
 	
 	public static Buff fromNBTTag(EntityLivingBase entity, String tagName,NBTTagCompound nbt){
-		EntityLivingBase origin = (EntityLivingBase) entity.worldObj.getEntityByID(nbt.getInteger("originID"));
 		Buff buff = new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
-		buff.origin = origin;
+		buff.originID = nbt.getInteger("originID");
 		return buff;
 	}
 }

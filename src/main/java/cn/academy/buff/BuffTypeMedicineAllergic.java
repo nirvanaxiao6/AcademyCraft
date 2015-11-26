@@ -31,7 +31,7 @@ public class BuffTypeMedicineAllergic extends BuffType {
 			entity.attackEntityFrom(dmgsrc, 5);
 			break;
 		case 4:
-			new Buff(BuffType.get("overwhelm"),10*60*20).addToEntity(buff.getOrigin(), entity);
+			new Buff(BuffType.get("overwhelm"),10*60*20).addToEntity((EntityLivingBase) entity.worldObj.getEntityByID(buff.getOrigin()), entity);
 			entity.attackEntityFrom(dmgsrc, 10);
 			break;
 		}
