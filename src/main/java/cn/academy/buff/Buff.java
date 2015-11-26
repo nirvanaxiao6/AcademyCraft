@@ -186,8 +186,7 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
-		if(this.origin!=null)
-			nbt.setInteger("originID", Integer.valueOf(origin.getEntityId()));
+		nbt.setInteger("originID", Integer.valueOf(origin.getEntityId()));
 		return nbt;
 	}
 	

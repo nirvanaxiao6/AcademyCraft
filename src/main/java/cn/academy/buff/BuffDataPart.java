@@ -44,7 +44,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		}
 		return nbt;
 	}
-	private int tick = 0;
+	private short tick = 0;
 	@Override
 	public void tick() {
 		tick++;
@@ -57,8 +57,10 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 				buff.getType().debug(buff);
 			}
 		}
-		if(tick%10 ==0 && !isRemote())
+		if(tick%10 == 0 && !isRemote()){
+			tick = 0;
 			sync();
+		}
 	}
 	
 	void add(Buff buff) {
