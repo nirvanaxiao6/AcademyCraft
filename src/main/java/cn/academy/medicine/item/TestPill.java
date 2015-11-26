@@ -18,7 +18,7 @@ public class TestPill extends ACItem {
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if(!world.isRemote){
-			new Buff(BuffType.get("medicineAllergic"),30).addToEntity(player, player);
+			new Buff(BuffType.get("medicineAllergic"),1000).addToEntity(player, player);
 		}
 		return super.onItemRightClick(stack, world, player);
 	}

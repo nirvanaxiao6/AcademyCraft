@@ -14,12 +14,13 @@ import net.minecraft.nbt.NBTTagCompound;
 @Registrant
 @RegDataPart("AC_Buff")
 public class BuffDataPart extends DataPart<EntityLivingBase> {
-	HashMap<String, Buff> activedBuff = new HashMap<String, Buff>();
+	HashMap<String, Buff> activedBuff;
 	
 	public BuffDataPart(){
 		super();
 		this.setTick();
 		this.clearOnDeath();
+		activedBuff = new HashMap<String, Buff>();
 	}
 	
 	public static BuffDataPart get(EntityLivingBase entity){
@@ -43,9 +44,10 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		}
 		return nbt;
 	}
-	
+	private int tick = 0;
 	@Override
 	public void tick() {
+		tick++;
 		for(Buff buff:activedBuff.values()){
 			if(!buff.onUpdate(getEntity())){
 				buff.removeFromEntity(getEntity(), buff.getType());
@@ -54,11 +56,9 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 			if(AcademyCraft.DEBUG_MODE){
 				buff.getType().debug(buff);
 			}
-			
-			if(buff.getDuration()%10 == 0){
-				sync();
-			}
 		}
+		if(tick%10 ==0 && !isRemote())
+			sync();
 	}
 	
 	void add(Buff buff) {
@@ -72,7 +72,8 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 			buff.getType().debug(buff);
 		}
 		
-		sync();
+		if(!isRemote())
+			sync();
 	}
 
 	void remove(Buff buff) {
@@ -82,6 +83,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		}
 		
 		this.activedBuff.remove(buff.getType().id);
-		sync();
+		if(!isRemote())
+			sync();
 	}
 }
