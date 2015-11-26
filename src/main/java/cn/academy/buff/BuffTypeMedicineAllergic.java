@@ -47,7 +47,7 @@ public class BuffTypeMedicineAllergic extends BuffType {
 			AcademyCraft.log.info("\n" + funcName + " : " +
 				"\n	level : " + buff.getLevel() +
 				"\n	duration : " + buff.getDuration() +
-				"\n	origin : " + buff.getOrigin()
+				"\n	originID : " + buff.getOrigin()
 				);
 	}
 }
