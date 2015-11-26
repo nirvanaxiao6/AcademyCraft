@@ -1,13 +1,13 @@
 /**
  * Copyright (c) Lambda Innovation, 2013-2015
- * 本作品版权由Lambda Innovation所有。
+ * 本作品版权由Lambda Innovation�?有�??
  * http://www.li-dev.cn/
  *
  * This project is open-source, and it is distributed under
  * the terms of GNU General Public License. You can modify
  * and distribute freely as long as you follow the license.
- * 本项目是一个开源项目，且遵循GNU通用公共授权协议。
- * 在遵照该协议的情况下，您可以自由传播和修改。
+ * 本项目是�?个开源项目，且遵循GNU通用公共授权协议�?
+ * 在遵照该协议的情况下，您可以自由传播和修改�??
  * http://www.gnu.org/licenses/gpl.html
  */
 package cn.academy.vanilla.teleporter.skills;
@@ -48,8 +48,9 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class Flashing extends SpecialSkill {
 
-	static List<Movement> movements = new ArrayList();
 	public static final Flashing instance = new Flashing();
+
+	private List<Movement> movements = new ArrayList<>();
 
 	private Flashing() {
 		super("flashing", 5);
@@ -63,7 +64,7 @@ public class Flashing extends SpecialSkill {
 		return instance.callFloatWithExp("range", aData);
 	}
 
-	private static void addMovement(Movement m) {
+	private void addMovement(Movement m) {
 		movements.add(m);
 		m.id = movements.size() - 1;
 	}
@@ -96,7 +97,7 @@ public class Flashing extends SpecialSkill {
 
 	}
 
-	static class Movement extends SubSkill {
+	class Movement extends SubSkill {
 
 		int id;
 		final Vec3 direction;
@@ -145,7 +146,7 @@ public class Flashing extends SpecialSkill {
 
 		@Override
 		public void readNBTStart(NBTTagCompound tag) {
-			movement = movements.get(tag.getByte("i"));
+			movement = instance.movements.get(tag.getByte("i"));
 		}
 
 		@Override
