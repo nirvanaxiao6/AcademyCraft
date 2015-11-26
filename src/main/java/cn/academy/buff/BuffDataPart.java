@@ -19,6 +19,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	public BuffDataPart(){
 		super();
 		this.setTick();
+		this.clearOnDeath();
 	}
 	
 	public static BuffDataPart get(EntityLivingBase entity){
@@ -53,6 +54,10 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 			if(AcademyCraft.DEBUG_MODE){
 				buff.getType().debug(buff);
 			}
+			
+			if(buff.getDuration()%10 == 0){
+				sync();
+			}
 		}
 	}
 	
@@ -66,6 +71,8 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		if(AcademyCraft.DEBUG_MODE){
 			buff.getType().debug(buff);
 		}
+		
+		sync();
 	}
 
 	void remove(Buff buff) {
@@ -75,5 +82,6 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		}
 		
 		this.activedBuff.remove(buff.getType().id);
+		sync();
 	}
 }
