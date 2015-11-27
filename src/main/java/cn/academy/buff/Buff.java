@@ -1,16 +1,18 @@
 package cn.academy.buff;
 
+import java.util.UUID;
+
 import cn.lambdalib.util.datapart.EntityData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.world.World;
 
 public class Buff {
+	private EntityLivingBase thisEntity;
 	private final BuffType type;
-	private int originID;
+	
+	private UUID originUUID;
 	
 	private int duration;
 	private int level;
@@ -58,6 +60,20 @@ public class Buff {
 		}
 	}
 	
+	public World getWorld(){
+		return thisEntity.worldObj;
+	}
+	
+	public Entity getOrigin(){
+		if(originUUID != null){
+			for(Object o : getWorld().getLoadedEntityList()){
+				Entity e = (Entity) o;
+				if(e.getUniqueID().equals(originUUID)) return e;
+			}
+		}
+		return null;
+	}
+	
 	public BuffType getType(){
 		return this.type;
 	}
@@ -93,7 +109,6 @@ public class Buff {
     }
 	
 	public Buff combine(EntityLivingBase entity, Buff buff){
-		this.originID = buff.originID;
 		switch(this.type.getDrationCombineType()){
 		case Max:
 			if(this.isDurationForever||buff.isDurationForever){
@@ -131,16 +146,17 @@ public class Buff {
 		return this;
 	}
 	
-	public int getOrigin(){
-		return this.originID;
-	}
 	/**
 	 * Add this buff to a Entity.
 	 * @param origin
 	 * @param entity
 	 */
-	public void addToEntity(EntityLivingBase origin, EntityLivingBase entity) {
-		this.originID = origin.getEntityId();
+	public void addToEntity(Entity origin, EntityLivingBase entity) {
+		if(origin == null)
+			this.originUUID = null;
+		else
+			this.originUUID = origin.getUniqueID();
+		thisEntity = entity;
 		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
 		data.add(this);
 		this.type.performEffectOnAdded(this, entity, level);
@@ -186,13 +202,13 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
-		nbt.setInteger("originID", Integer.valueOf(originID));
+		nbt.setString("originUUID", this.originUUID.toString());
 		return nbt;
 	}
 	
 	public static Buff fromNBTTag(EntityLivingBase entity, String tagName,NBTTagCompound nbt){
 		Buff buff = new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
-		buff.originID = nbt.getInteger("originID");
+		buff.originUUID = UUID.fromString(nbt.getString("originUUID"));
 		return buff;
 	}
 }
