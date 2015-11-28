@@ -20,6 +20,9 @@ import net.minecraft.util.StringUtils;
 public abstract class BuffType {
     public final boolean isBadEffect;
     public final int defaultDuration;
+    public boolean showInHUD = true;
+
+	private int maxLevel = 64;
 
 	private CombineType durationCombineType = CombineType.Max;
 	private CombineType levelCombineType = CombineType.Max;
@@ -36,7 +39,7 @@ public abstract class BuffType {
     }
     
     public BuffType(String id, boolean isBadEffect) {
-    	this(id,0,isBadEffect);
+    	this(id,100,isBadEffect);
     }
 
     public static enum CombineType{
@@ -97,6 +100,14 @@ public abstract class BuffType {
     
     public String getKey(String id) {
 		return "ac.buff."+id;
+	}
+	
+	public void setMaxLevel(int max){
+		this.maxLevel = max;
+	}
+	
+	public int getMaxLevel(){
+		return this.maxLevel;
 	}
     
     @SideOnly(Side.CLIENT)

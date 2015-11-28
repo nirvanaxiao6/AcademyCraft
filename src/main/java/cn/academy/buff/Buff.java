@@ -50,7 +50,7 @@ public class Buff {
 	 */
 	public Buff(BuffType type, int level, boolean isForeverOrDefault){
 		this.type = type;
-		this.level = level;
+		this.level = Math.min(level, type.getMaxLevel());
 		if(isForeverOrDefault){
 			this.duration = 0;
 			this.isDurationForever = true;
@@ -109,6 +109,7 @@ public class Buff {
     }
 	
 	public Buff combine(EntityLivingBase entity, Buff buff){
+		this.originUUID = buff.originUUID;
 		switch(this.type.getDrationCombineType()){
 		case Max:
 			if(this.isDurationForever||buff.isDurationForever){
@@ -141,7 +142,8 @@ public class Buff {
 			this.level+=buff.level;
 			break;
 		}
-		
+		if(this.level > this.type.getMaxLevel())
+			this.level = this.type.getMaxLevel();
 		this.type.performEffectOnCombine(this, entity, level);
 		return this;
 	}
@@ -202,13 +204,15 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
-		nbt.setString("originUUID", this.originUUID.toString());
+		nbt.setString("originUUID", this.originUUID == null ? "null" : this.originUUID.toString());
 		return nbt;
 	}
 	
 	public static Buff fromNBTTag(EntityLivingBase entity, String tagName,NBTTagCompound nbt){
 		Buff buff = new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
-		buff.originUUID = UUID.fromString(nbt.getString("originUUID"));
+		buff.thisEntity = entity;
+		String s = nbt.getString("originUUID");
+		buff.originUUID = s.equals("null") ? null : UUID.fromString(s);
 		return buff;
 	}
 }

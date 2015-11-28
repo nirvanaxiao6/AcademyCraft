@@ -10,7 +10,7 @@ import net.minecraft.util.DamageSource;
 @Registrant
 @RegBuffType
 public class BuffTypeMedicineAllergic extends BuffType {
-	DamageSource dmgsrc = DamageSource.generic;
+	DamageSource dmgsrc = (new DamageSource("medicineAllergic")).setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
 
 	public BuffTypeMedicineAllergic() {
 		super("medicineAllergic", true);
@@ -32,11 +32,16 @@ public class BuffTypeMedicineAllergic extends BuffType {
 			break;
 		case 4:
 			new Buff(BuffType.get("overwhelm"),10*60*20).addToEntity(buff.getOrigin(), entity);
-			entity.attackEntityFrom(dmgsrc, 10);
+			entity.attackEntityFrom(dmgsrc, 7);
 			break;
 		}
 		if(level>=5){
-			entity.attackEntityFrom(dmgsrc, Float.MAX_VALUE);
+			int i = entity.worldObj.rand.nextInt(10);
+			if(i<level)
+				entity.attackEntityFrom(dmgsrc, Float.MAX_VALUE);
+			else
+				entity.attackEntityFrom(dmgsrc, 7);
+			AcademyCraft.log.info(i);
 		}
 	}
 	
@@ -46,7 +51,8 @@ public class BuffTypeMedicineAllergic extends BuffType {
 		if(!funcName.equals("tick")||buff.getDuration()%10==0)
 			AcademyCraft.log.info("\n" + funcName + " : " +
 				"\n	level : " + buff.getLevel() +
-				"\n	duration : " + buff.getDuration()
+				"\n	duration : " + buff.getDuration() +
+				"\n	origin : " + buff.getOrigin()
 				);
 	}
 }
