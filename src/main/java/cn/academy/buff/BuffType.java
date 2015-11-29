@@ -13,6 +13,7 @@ import cn.lambdalib.annoreg.core.RegistryTypeDecl;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 
@@ -111,17 +112,8 @@ public abstract class BuffType {
 	}
     
     @SideOnly(Side.CLIENT)
-    public static String getDurationString(Buff buff)
-    {
-        if (buff.isForever())
-        {
-            return "**:**";
-        }
-        else
-        {
-            int i = buff.getDuration();
-            return StringUtils.ticksToElapsedTime(i);
-        }
+    public ResourceLocation getIcon(Buff buff) {
+    	return null;
     }
     
     public void debug(Buff buff){}

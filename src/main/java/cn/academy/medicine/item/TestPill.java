@@ -2,6 +2,7 @@ package cn.academy.medicine.item;
 
 import cn.academy.buff.Buff;
 import cn.academy.buff.BuffType;
+import cn.academy.buff.ModuleBuffType;
 import cn.academy.core.AcademyCraft;
 import cn.academy.core.item.ACItem;
 import cn.lambdalib.annoreg.core.Registrant;
@@ -18,7 +19,7 @@ public class TestPill extends ACItem {
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if(!world.isRemote){
-			new Buff(BuffType.get("medicineAllergic"),1000).addToEntity(player, player);
+			new Buff(ModuleBuffType.medicineAllergic,1000).addToEntity(player, player);
 		}
 		return super.onItemRightClick(stack, world, player);
 	}

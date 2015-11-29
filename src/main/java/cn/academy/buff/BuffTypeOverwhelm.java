@@ -4,10 +4,11 @@ import cn.academy.ability.api.data.CPData;
 import cn.lambdalib.annoreg.core.Registrant;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
 @Registrant
-@RegBuffType
 public class BuffTypeOverwhelm extends BuffType {
+	ResourceLocation icon = new ResourceLocation("academy:textures/guis/buff_icons/overwhelm/overwhelm.png");
 
 	public BuffTypeOverwhelm() {
 		super("overwhelm",true);
@@ -28,5 +29,10 @@ public class BuffTypeOverwhelm extends BuffType {
 			EntityPlayer player = (EntityPlayer) entity;
 			CPData.get(player).perform(0, 0);
 		}
+	}
+	
+	@Override
+	public ResourceLocation getIcon(Buff buff) {
+		return icon;
 	}
 }

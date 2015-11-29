@@ -3,9 +3,13 @@ package cn.academy.buff;
 import java.util.UUID;
 
 import cn.lambdalib.util.datapart.EntityData;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 
 public class Buff {
@@ -99,6 +103,26 @@ public class Buff {
 		this.isDurationForever=true;
 		this.duration=0;
 	}
+	
+	@SideOnly(Side.CLIENT)
+	public  ResourceLocation getIcon(){
+		return this.type.getIcon(this);
+	}
+
+    
+    @SideOnly(Side.CLIENT)
+    public String getDurationString()
+    {
+        if (this.isForever())
+        {
+            return "**:**";
+        }
+        else
+        {
+            int i = this.getDuration();
+            return StringUtils.ticksToElapsedTime(i);
+        }
+    }
 	
 	public boolean onUpdate(EntityLivingBase entity) {
         if (this.duration>0) {

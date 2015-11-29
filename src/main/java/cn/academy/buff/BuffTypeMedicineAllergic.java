@@ -6,16 +6,24 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 
 @Registrant
-@RegBuffType
 public class BuffTypeMedicineAllergic extends BuffType {
 	DamageSource dmgsrc = (new DamageSource("medicineAllergic")).setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
-
+	ResourceLocation[] icons = {
+			tex(1),tex(2),tex(3),tex(4),tex(5)
+	};
+	
+	private static ResourceLocation tex(int i) {
+		return new ResourceLocation("academy:textures/guis/buff_icons/medicine_allergic/" + "level" + i + ".png");
+	}
+	
 	public BuffTypeMedicineAllergic() {
 		super("medicineAllergic", true);
 		this.setLevelCombineType(CombineType.PlusOne);
 		this.setLevelRemoveType(RemoveType.RemoveAll);
+		this.registBuffType();
 	}
 	
 	@Override
@@ -31,7 +39,7 @@ public class BuffTypeMedicineAllergic extends BuffType {
 			entity.attackEntityFrom(dmgsrc, 5);
 			break;
 		case 4:
-			new Buff(BuffType.get("overwhelm"),10*60*20).addToEntity(buff.getOrigin(), entity);
+			new Buff(ModuleBuffType.overwhelm,10*60*20).addToEntity(buff.getOrigin(), entity);
 			entity.attackEntityFrom(dmgsrc, 7);
 			break;
 		}
@@ -43,6 +51,12 @@ public class BuffTypeMedicineAllergic extends BuffType {
 				entity.attackEntityFrom(dmgsrc, 7);
 			AcademyCraft.log.info(i);
 		}
+	}
+	
+	@Override
+	public ResourceLocation getIcon(Buff buff) {
+		int level = Math.min(5, buff.getLevel());
+		return icons[level-1];
 	}
 	
 	@Override

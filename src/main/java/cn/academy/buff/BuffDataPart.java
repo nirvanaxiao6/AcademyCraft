@@ -23,6 +23,10 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		activedBuff = new HashMap<String, Buff>();
 	}
 	
+	public HashMap<String,Buff> getActivedBuff() {
+		return this.activedBuff;
+	}
+	
 	public static BuffDataPart get(EntityLivingBase entity){
 		return EntityData.get(entity).getPart(BuffDataPart.class);
 	}
