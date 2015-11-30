@@ -1,6 +1,7 @@
 package cn.academy.buff;
 
 import cn.academy.ability.api.data.CPData;
+import cn.academy.core.AcademyCraft;
 import cn.lambdalib.annoreg.core.Registrant;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,8 @@ public class BuffTypeOverwhelm extends BuffType {
 	public void performEffectOnTick(Buff buff, EntityLivingBase entity, int duration, int level) {
 		if(entity != null && entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) entity;
-			CPData.get(player).perform(0, 0);
+			CPData cp = CPData.get(player);
+			cp.perform(Math.max(0, 80-cp.getOverload()), 0);
 		}
 	}
 	

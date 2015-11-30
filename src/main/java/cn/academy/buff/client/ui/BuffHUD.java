@@ -28,9 +28,10 @@ public class BuffHUD extends AuxGui{
 	@Override
 	public void draw(ScaledResolution sr) {
 		final int WIDTH = sr.getScaledWidth(), HEIGHT = sr.getScaledHeight();
-		int X0 = -16*sr.getScaleFactor(), Y0 = 16*sr.getScaleFactor();
-		double len = 16*sr.getScaleFactor(),
-		        hei = 16*sr.getScaleFactor();
+		int X0 = -8*sr.getScaleFactor(),
+				Y0 = 20*sr.getScaleFactor();
+		double len = 8*sr.getScaleFactor(),
+		        hei = 8*sr.getScaleFactor();
 		Tessellator t = Tessellator.instance;
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
@@ -49,7 +50,7 @@ public class BuffHUD extends AuxGui{
 			t.draw();
 			
 			fr.drawStringWithShadow(buff.getDurationString(), (int) (X0 + (WIDTH - len)), (int) (Y0 + hei),0x00FFFFFF);
-			X0-=18*sr.getScaleFactor();
+			Y0+=(4*sr.getScaleFactor()+hei);
 		}
 		GL11.glPopMatrix();
 	}

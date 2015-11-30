@@ -78,6 +78,10 @@ public class Buff {
 		return null;
 	}
 	
+	public EntityLivingBase getThisEntity(){
+		return thisEntity;
+	}
+	
 	public BuffType getType(){
 		return this.type;
 	}
