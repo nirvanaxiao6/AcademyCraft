@@ -44,7 +44,11 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	public NBTTagCompound toNBT() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		for(Buff buff:activedBuff.values()){
-			nbt.setTag(buff.getType().id, buff.toNBTTag());
+			try {
+				nbt.setTag(buff.getType().id, buff.toNBTTag());
+			} catch (NullPointerException e) {
+				AcademyCraft.log.error("Error in Buff toNBT: ");
+			}
 		}
 		return nbt;
 	}

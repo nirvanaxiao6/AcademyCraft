@@ -18,7 +18,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 
 @Registrant
-public abstract class BuffType {
+public class BuffType {
     public final boolean isBadEffect;
     public final int defaultDuration;
     public boolean showInHUD = true;

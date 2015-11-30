@@ -2,6 +2,7 @@ package cn.academy.buff.client.ui;
 
 import org.lwjgl.opengl.GL11;
 
+import cn.academy.ability.api.data.CPData;
 import cn.academy.buff.Buff;
 import cn.academy.buff.BuffDataPart;
 import cn.lambdalib.annoreg.core.Registrant;
@@ -14,11 +15,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
 @Registrant
 @RegAuxGui
 public class BuffHUD extends AuxGui{
-	
+	ResourceLocation more = new ResourceLocation("academy:textures/guis/buff_icons/more.png");
 
 	@Override
 	public boolean isForeground() {
@@ -27,31 +29,46 @@ public class BuffHUD extends AuxGui{
 
 	@Override
 	public void draw(ScaledResolution sr) {
+		
 		final int WIDTH = sr.getScaledWidth(), HEIGHT = sr.getScaledHeight();
 		int X0 = -8*sr.getScaleFactor(),
 				Y0 = 20*sr.getScaleFactor();
-		double len = 8*sr.getScaleFactor(),
-		        hei = 8*sr.getScaleFactor();
-		Tessellator t = Tessellator.instance;
+		int len = 10*sr.getScaleFactor(),
+		        hei = 10*sr.getScaleFactor();
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		BuffDataPart data = BuffDataPart.get(player);
+		Buff[] buffs = new Buff[6];
+		buffs = data.getActivedBuff().values().toArray(buffs);
+		int showedBuffNum = Math.min(data.getActivedBuff().values().size(), 5);
+		
+		if(!CPData.get(player).isActivated())
+			return;
+
 		GL11.glPushMatrix();
-		for(Buff buff : data.getActivedBuff().values()){
-			if(!buff.getType().showInHUD || buff.getIcon()==null)
+		for(int i = 0;i<=showedBuffNum;i++){
+			Buff buff = buffs[i];
+			if(buff == null || !buff.getType().showInHUD || buff.getIcon()==null)
 				continue;
-			RenderUtils.loadTexture(buff.getIcon());
-			
-			t.startDrawingQuads();
-			t.addVertexWithUV(X0 + (WIDTH - len), Y0, -90, 0, 0);
-			t.addVertexWithUV(X0 + (WIDTH - len), Y0 + hei, -90, 0, 1);
-			t.addVertexWithUV(X0 + WIDTH, Y0 + hei, -90, 1, 1);
-			t.addVertexWithUV(X0 + WIDTH, Y0, -90, 1, 0);
-			t.draw();
-			
+			drawIcon(buff.getIcon(), X0 + WIDTH, Y0, len, hei);
 			fr.drawStringWithShadow(buff.getDurationString(), (int) (X0 + (WIDTH - len)), (int) (Y0 + hei),0x00FFFFFF);
 			Y0+=(4*sr.getScaleFactor()+hei);
 		}
+		if(showedBuffNum > 5)
+			drawIcon(more, X0+WIDTH, Y0, len, hei);
 		GL11.glPopMatrix();
+	}
+	
+	void drawIcon(ResourceLocation icon, int x, int y, int len, int hei) {
+
+		RenderUtils.loadTexture(icon);
+
+		Tessellator t = Tessellator.instance;
+		t.startDrawingQuads();
+		t.addVertexWithUV(x - len, y, -90, 0, 0);
+		t.addVertexWithUV(x - len, y + hei, -90, 0, 1);
+		t.addVertexWithUV(x, y + hei, -90, 1, 1);
+		t.addVertexWithUV(x, y, -90, 1, 0);
+		t.draw();
 	}
 }
