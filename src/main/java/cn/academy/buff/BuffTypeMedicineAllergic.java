@@ -34,7 +34,7 @@ public class BuffTypeMedicineAllergic extends BuffType {
 			entity.attackEntityFrom(dmgsrc, Math.min(entity.getHealth()-1, 3));
 			break;
 		case 3:
-			entity.addPotionEffect(new PotionEffect(Potion.confusion.id, 15*20));
+			entity.addPotionEffect(new PotionEffect(Potion.confusion.id, buff.getDuration()));
 			entity.addPotionEffect(new PotionEffect(Potion.hunger.id, 15*20));
 			entity.attackEntityFrom(dmgsrc, 5);
 			break;

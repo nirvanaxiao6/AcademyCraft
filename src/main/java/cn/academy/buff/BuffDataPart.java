@@ -36,7 +36,10 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		activedBuff.clear();
 		for(Object s:tag.func_150296_c()){
 			String key = (String)s;
-			activedBuff.put(key, Buff.fromNBTTag(getEntity(), key, tag.getCompoundTag(key)));
+			Buff buff = Buff.fromNBTTag(getEntity(), key, tag.getCompoundTag(key));
+			if(buff.getType() == null)
+				continue;
+			activedBuff.put(key, buff);
 		}
 	}
 
@@ -44,11 +47,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	public NBTTagCompound toNBT() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		for(Buff buff:activedBuff.values()){
-			try {
-				nbt.setTag(buff.getType().id, buff.toNBTTag());
-			} catch (NullPointerException e) {
-				AcademyCraft.log.error("Error in Buff toNBT: ");
-			}
+			nbt.setTag(buff.getType().id, buff.toNBTTag());
 		}
 		return nbt;
 	}

@@ -20,7 +20,7 @@ public class BuffTypeOverwhelm extends BuffType {
 	public void performEffectOnAdded(Buff buff, EntityLivingBase entity, int level) {
 		if(entity != null && entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) entity;
-			CPData.get(player).perform(80, 0);
+			CPData.get(player).perform(120, 0);
 		}
 	}
 	
@@ -29,7 +29,7 @@ public class BuffTypeOverwhelm extends BuffType {
 		if(entity != null && entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) entity;
 			CPData cp = CPData.get(player);
-			cp.perform(Math.max(0, 80-cp.getOverload()), 0);
+			cp.perform(0, 0);
 		}
 	}
 	
