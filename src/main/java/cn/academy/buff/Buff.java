@@ -18,9 +18,9 @@ public class Buff {
 	
 	private UUID originUUID;
 	
-	private int duration;
-	private int level;
-	private boolean isDurationForever;
+	protected int duration;
+	protected int level;
+	protected boolean isDurationForever;
 	
 	private Buff(BuffType type, int level, int durationTick, boolean useDefaultDuration, boolean isForever) {
 		this.type = type;
@@ -138,40 +138,7 @@ public class Buff {
 	
 	public Buff combine(EntityLivingBase entity, Buff buff){
 		this.originUUID = buff.originUUID;
-		switch(this.type.getDrationCombineType()){
-		case Max:
-			if(this.isDurationForever||buff.isDurationForever){
-				this.isDurationForever = true;
-				break;
-			}
-			this.duration = Math.max(this.duration, buff.duration);
-			break;
-		case Sum:
-			if(this.isDurationForever||buff.isDurationForever){
-				this.isDurationForever = true;
-				break;
-			}
-			this.duration+=buff.duration;
-			break;
-		case PlusOne:case NoChange:
-			break;
-		}
-		
-		switch(this.type.getLevelCombineType()){
-		case Max:
-			this.level = Math.max(this.level, buff.level);
-			break;
-		case NoChange:
-			break;
-		case PlusOne:
-			this.level++;
-			break;
-		case Sum:
-			this.level+=buff.level;
-			break;
-		}
-		if(this.level > this.type.getMaxLevel())
-			this.level = this.type.getMaxLevel();
+		this.type.getCombiner().combine(this, buff);
 		this.type.performEffectOnCombine(this, entity, level);
 		return this;
 	}
@@ -192,26 +159,11 @@ public class Buff {
 		this.type.performEffectOnAdded(this, entity, level);
 	}
 	
-	void removeFromEntity(EntityLivingBase entity, BuffType type) {
+	void removeFromEntity(EntityLivingBase entity) {
 		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
-		Buff buff = data.activedBuff.get(type.id);
-		if(buff==null)
-			return;
+		type.performEffectOnRemove(this, entity, this.level);
 		
-		type.performEffectOnRemove(buff, entity, buff.level);
-		
-		switch(type.getLevelRemoveType()){
-		case RemoveAll:
-			buff.level=0;
-			break;
-		case RemoveOne:
-			buff.level--;
-			buff.duration=buff.type.defaultDuration;
-			break;
-		}
-		if(buff.level<=0){
-			data.remove(buff);
-		}
+		type.getRemover().remove(this);
 	}
 	
 	public static void clearFromEntity(EntityLivingBase entity, BuffType type,int level) {

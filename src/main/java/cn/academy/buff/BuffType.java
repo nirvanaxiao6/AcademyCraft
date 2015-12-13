@@ -25,10 +25,23 @@ public class BuffType {
 
 	private int maxLevel = 64;
 
-	private CombineType durationCombineType = CombineType.Max;
-	private CombineType levelCombineType = CombineType.Max;
+	private ICombiner combiner = new ICombiner() {
+		
+		@Override
+		public void combine(Buff baseBuff, Buff combinedBuff) {
+			baseBuff.level = Math.min(maxLevel, baseBuff.level+combinedBuff.level);
+			baseBuff.duration += combinedBuff.duration;
+			baseBuff.isDurationForever |= combinedBuff.isDurationForever;
+		}
+	};
 	
-	private RemoveType levelRemoveType = RemoveType.RemoveAll;
+	private IRemover remover= new IRemover() {
+		
+		@Override
+		public void remove(Buff buff) {
+			buff.level = 0;
+		}
+	};
 	
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
@@ -42,51 +55,36 @@ public class BuffType {
     public BuffType(String id, boolean isBadEffect) {
     	this(id,100,isBadEffect);
     }
-
-    public static enum CombineType{
-		Max,Sum,PlusOne,NoChange;
-	}
-	
-	public void setCombineType(CombineType durationCombineType, CombineType levelCombineType) {
-		this.durationCombineType = durationCombineType;
-		this.levelCombineType = levelCombineType;
-	}
-	
-	public void setDrationCombineType(CombineType durationCombineType) {
-		this.durationCombineType = durationCombineType;
-	}
-	
-	public void setLevelCombineType(CombineType levelCombineType) {
-		this.levelCombineType = levelCombineType;
-	}
-	
-	public CombineType getDrationCombineType(){
-		return this.durationCombineType;
-	}
-	
-	public CombineType getLevelCombineType(){
-		return this.levelCombineType;
-	}
-	
-	
-	public static enum RemoveType{
-		RemoveOne, RemoveAll;
-	}
     
-	public void setLevelRemoveType(RemoveType levelRemoveType){
-		this.levelRemoveType = levelRemoveType;
+    public interface ICombiner {
+    	public void combine(Buff baseBuff,Buff combinedBuff);
+    }
+	
+    public ICombiner getCombiner() {
+    	return this.combiner;
+    }
+
+	void setCombiner(ICombiner combiner){
+		this.combiner = combiner;
 	}
 	
-	public RemoveType getLevelRemoveType(){
-		return this.levelRemoveType;
+	public interface IRemover {
+		void remove(Buff buff);
 	}
 	
+	public IRemover getRemover() {
+		return this.remover;
+	}
 	
-	public void registBuffType(){
+	void setRemover(IRemover remover){
+		this.remover = remover;
+	}
+	
+	public void registBuffType() {
     	allBuffMap.put(this.id, this);
     }
 	
-    public static void registBuffType(BuffType type){
+    public static void registBuffType(BuffType type) {
     	type.registBuffType();
     }
     
@@ -95,7 +93,7 @@ public class BuffType {
 		return allBuffMap.get(id);
     }
     
-    public String getName(){
+    public String getName() {
     	return StatCollector.translateToLocal(getKey(id));
     }
     

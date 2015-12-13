@@ -57,7 +57,7 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		tick++;
 		for(Buff buff:activedBuff.values()){
 			if(!buff.onUpdate(getEntity())){
-				buff.removeFromEntity(getEntity(), buff.getType());
+				buff.removeFromEntity(getEntity());
 			}
 
 			if(AcademyCraft.DEBUG_MODE){

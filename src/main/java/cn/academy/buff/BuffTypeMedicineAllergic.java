@@ -21,8 +21,12 @@ public class BuffTypeMedicineAllergic extends BuffType {
 	
 	public BuffTypeMedicineAllergic() {
 		super("medicineAllergic", true);
-		this.setLevelCombineType(CombineType.PlusOne);
-		this.setLevelRemoveType(RemoveType.RemoveAll);
+		this.setCombiner(new ICombiner() {
+			@Override
+			public void combine(Buff baseBuff, Buff combinedBuff) {
+				
+			}
+		});
 		this.registBuffType();
 	}
 	
