@@ -1,5 +1,6 @@
 package cn.academy.buff;
 
+import cn.academy.buff.Combiner.ILevelCombiner;
 import cn.academy.core.AcademyCraft;
 import cn.lambdalib.annoreg.core.Registrant;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,12 +22,7 @@ public class BuffTypeMedicineAllergic extends BuffType {
 	
 	public BuffTypeMedicineAllergic() {
 		super("medicineAllergic", true);
-		this.setCombiner(new ICombiner() {
-			@Override
-			public void combine(Buff baseBuff, Buff combinedBuff) {
-				
-			}
-		});
+		this.setLevelCombiner(ILevelCombiner.PlusOne);
 		this.registBuffType();
 	}
 	
@@ -53,7 +49,6 @@ public class BuffTypeMedicineAllergic extends BuffType {
 				entity.attackEntityFrom(dmgsrc, Float.MAX_VALUE);
 			else
 				entity.attackEntityFrom(dmgsrc, 7);
-			AcademyCraft.log.info(i);
 		}
 	}
 	

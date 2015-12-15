@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 import com.google.common.collect.HashBiMap;
 
+import cn.academy.buff.Combiner.IDurationCombiner;
+import cn.academy.buff.Combiner.ILevelCombiner;
 import cn.lambdalib.annoreg.base.RegistrationClassSimple;
 import cn.lambdalib.annoreg.core.Registrant;
 import cn.lambdalib.annoreg.core.RegistryTypeDecl;
@@ -20,56 +22,32 @@ import net.minecraft.util.StringUtils;
 @Registrant
 public class BuffType {
     public final boolean isBadEffect;
-    public final int defaultDuration;
     public boolean showInHUD = true;
 
 	private int maxLevel = 64;
 
-	private ICombiner combiner = new ICombiner() {
-		
-		@Override
-		public void combine(Buff baseBuff, Buff combinedBuff) {
-			baseBuff.level = Math.min(maxLevel, baseBuff.level+combinedBuff.level);
-			baseBuff.duration += combinedBuff.duration;
-			baseBuff.isDurationForever |= combinedBuff.isDurationForever;
-		}
-	};
+	private Combiner combiner = new Combiner(ILevelCombiner.Max,IDurationCombiner.Max);
 	
-	private IRemover remover= new IRemover() {
-		
-		@Override
-		public void remove(Buff buff) {
-			buff.level = 0;
-		}
-	};
+	private IRemover remover= IRemover.RemoveAll;
 	
     public final String id;
     private static HashBiMap<String,BuffType> allBuffMap = HashBiMap.create();
     
-    public BuffType(String id, int defaultDuration, boolean isBadEffect) {
+    public BuffType(String id, boolean isBadEffect) {
     	this.id = id;
-    	this.defaultDuration = defaultDuration;
     	this.isBadEffect = isBadEffect;
     }
-    
-    public BuffType(String id, boolean isBadEffect) {
-    	this(id,100,isBadEffect);
-    }
-    
-    public interface ICombiner {
-    	public void combine(Buff baseBuff,Buff combinedBuff);
-    }
 	
-    public ICombiner getCombiner() {
+    public Combiner getCombiner() {
     	return this.combiner;
     }
 
-	void setCombiner(ICombiner combiner){
-		this.combiner = combiner;
+	void setLevelCombiner(ILevelCombiner levelCombiner) {
+		this.combiner.levelCombiner = levelCombiner;
 	}
 	
-	public interface IRemover {
-		void remove(Buff buff);
+	void setDurationCombiner(IDurationCombiner durationCombiner) {
+		this.combiner.durationCombiner = durationCombiner;
 	}
 	
 	public IRemover getRemover() {

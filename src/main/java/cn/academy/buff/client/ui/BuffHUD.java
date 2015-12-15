@@ -42,8 +42,6 @@ public class BuffHUD extends AuxGui{
 		buffs = data.getActivedBuff().values().toArray(buffs);
 		int showedBuffNum = Math.min(data.getActivedBuff().values().size(), 5);
 		
-		if(!CPData.get(player).isActivated())
-			return;
 
 		GL11.glPushMatrix();
 		for(int i = 0;i<=showedBuffNum;i++){
@@ -51,8 +49,9 @@ public class BuffHUD extends AuxGui{
 			if(buff == null || !buff.getType().showInHUD || buff.getIcon()==null)
 				continue;
 			drawIcon(buff.getIcon(), X0 + WIDTH, Y0, len, hei);
-			fr.drawStringWithShadow(buff.getDurationString(), (int) (X0 + (WIDTH - len)), (int) (Y0 + hei),0x00FFFFFF);
-			Y0+=(4*sr.getScaleFactor()+hei);
+			//Change to TTF later
+			fr.drawStringWithShadow(buff.getDurationString(), (int) (X0 + (WIDTH - len)), (int) (Y0 + 1.1*hei),0x00FFFFFF);
+			Y0 += (1.1*hei);
 		}
 		if(showedBuffNum > 5)
 			drawIcon(more, X0+WIDTH, Y0, len, hei);

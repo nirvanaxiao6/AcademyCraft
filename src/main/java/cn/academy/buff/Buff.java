@@ -19,49 +19,26 @@ public class Buff {
 	private UUID originUUID;
 	
 	protected int duration;
+	protected final int lastDuration;
 	protected int level;
 	protected boolean isDurationForever;
 	
-	private Buff(BuffType type, int level, int durationTick, boolean useDefaultDuration, boolean isForever) {
+	private Buff(BuffType type, int level, int durationTick, int lastDuration, boolean isForever) {
 		this.type = type;
 		this.level = level;
 		
-		if(useDefaultDuration)
-			this.duration = this.type.defaultDuration;
-		else
-			this.duration = durationTick;
+		this.duration = durationTick;
+		this.lastDuration = lastDuration;
 		
 		this.isDurationForever = isForever;
 	}
 	
-	private Buff(BuffType type, int level, int durationTick, boolean isForever) {
-		this(type,level,durationTick,false,isForever);
-	}
-	
 	public Buff(BuffType type,int level,int durationTick) {
-		this(type,level,durationTick,false,false);
+		this(type,level,durationTick,durationTick,false);
 	}
 	
 	public Buff(BuffType type,int durationTick) {
-		this(type,1,durationTick,false,false);
-	}
-	/**
-	 * 
-	 * @param type
-	 * @param level
-	 * @param isForeverOrDefault True if the buff will last forever;
-	 * False if the buff use the default duration defined in {@link BuffType#defaultDuration}
-	 */
-	public Buff(BuffType type, int level, boolean isForeverOrDefault){
-		this.type = type;
-		this.level = Math.min(level, type.getMaxLevel());
-		if(isForeverOrDefault){
-			this.duration = 0;
-			this.isDurationForever = true;
-		}else{
-			this.duration = this.type.defaultDuration;
-			this.isDurationForever = false;
-		}
+		this(type,1,durationTick);
 	}
 	
 	public World getWorld(){
@@ -108,11 +85,11 @@ public class Buff {
 		this.duration=0;
 	}
 	
+	
 	@SideOnly(Side.CLIENT)
 	public  ResourceLocation getIcon(){
 		return this.type.getIcon(this);
 	}
-
     
     @SideOnly(Side.CLIENT)
     public String getDurationString()
@@ -128,7 +105,8 @@ public class Buff {
         }
     }
 	
-	public boolean onUpdate(EntityLivingBase entity) {
+    
+    public boolean onUpdate(EntityLivingBase entity) {
         if (this.duration>0) {
             this.type.performEffectOnTick(this, entity, duration, level);
             this.duration--;
@@ -154,29 +132,15 @@ public class Buff {
 		else
 			this.originUUID = origin.getUniqueID();
 		thisEntity = entity;
-		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
+		BuffDataPart data = BuffDataPart.get(thisEntity);
 		data.add(this);
-		this.type.performEffectOnAdded(this, entity, level);
+		this.type.performEffectOnAdded(this, thisEntity, level);
 	}
 	
-	void removeFromEntity(EntityLivingBase entity) {
-		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
+	boolean onRemoveFromEntity(EntityLivingBase entity) {
 		type.performEffectOnRemove(this, entity, this.level);
 		
-		type.getRemover().remove(this);
-	}
-	
-	public static void clearFromEntity(EntityLivingBase entity, BuffType type,int level) {
-		BuffDataPart data = EntityData.get(entity).getPart(BuffDataPart.class);
-		Buff buff = data.activedBuff.get(type.id);
-		if(buff==null)
-			return;
-		
-		type.performEffectOnClear(buff, entity, buff.level);
-		buff.level -= level;
-		if(buff.level<=0){
-			data.remove(buff);
-		}
+		return type.getRemover().remove(this);
 	}
 	
 	public NBTTagCompound toNBTTag(){
@@ -184,12 +148,19 @@ public class Buff {
 		nbt.setBoolean("isForever", Boolean.valueOf(isDurationForever));
 		nbt.setByte("level", Byte.valueOf((byte) level));
 		nbt.setInteger("duration", Integer.valueOf(this.duration));
+		nbt.setInteger("lastDuration", Integer.valueOf(this.lastDuration));
 		nbt.setString("originUUID", this.originUUID == null ? "null" : this.originUUID.toString());
 		return nbt;
 	}
 	
 	public static Buff fromNBTTag(EntityLivingBase entity, String tagName,NBTTagCompound nbt){
-		Buff buff = new Buff(BuffType.get(tagName), nbt.getByte("level"), nbt.getInteger("duration"), nbt.getBoolean("isForever"));
+		Buff buff = new Buff(
+				BuffType.get(tagName), 
+				nbt.getByte("level"), 
+				nbt.getInteger("duration"), 
+				nbt.getInteger("lastDuration"), 
+				nbt.getBoolean("isForever")
+				);
 		buff.thisEntity = entity;
 		String s = nbt.getString("originUUID");
 		buff.originUUID = s.equals("null") ? null : UUID.fromString(s);

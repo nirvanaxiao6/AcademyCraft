@@ -1,6 +1,7 @@
 package cn.academy.buff;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import cn.academy.core.AcademyCraft;
 import cn.lambdalib.annoreg.core.Registrant;
@@ -8,7 +9,6 @@ import cn.lambdalib.util.datapart.DataPart;
 import cn.lambdalib.util.datapart.EntityData;
 import cn.lambdalib.util.datapart.RegDataPart;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 @Registrant
@@ -51,13 +51,21 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 		}
 		return nbt;
 	}
+	
 	private short tick = 0;
+	private LinkedList<Buff> removeList= new LinkedList<>();
 	@Override
 	public void tick() {
 		tick++;
+		for(Buff removedBuff : removeList){
+			activedBuff.remove(removedBuff.getType().id);
+		}
+		
 		for(Buff buff:activedBuff.values()){
 			if(!buff.onUpdate(getEntity())){
-				buff.removeFromEntity(getEntity());
+				if(buff.onRemoveFromEntity(getEntity())){
+					remove(buff);
+				}
 			}
 
 			if(AcademyCraft.DEBUG_MODE){
@@ -86,13 +94,11 @@ public class BuffDataPart extends DataPart<EntityLivingBase> {
 	}
 
 	void remove(Buff buff) {
+		removeList.add(buff);
 		
 		if(AcademyCraft.DEBUG_MODE){
 			buff.getType().debug(buff);
 		}
-		
-		this.activedBuff.remove(buff.getType().id);
-		if(!isRemote())
-			sync();
 	}
+	
 }
